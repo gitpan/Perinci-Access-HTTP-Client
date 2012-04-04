@@ -1,0 +1,13 @@
+Revision history for Perinci-Access-HTTP-Client
+
+0.02     2012-04-04
+
+         [INCOMPATIBLE CHANGES]
+
+         Follow Perinci::Access request() interface instead of putting server
+         URL as object attribute.
+
+
+0.01     2012-04-04
+
+         First release (adjusted from Sub-Spec-URI-http).

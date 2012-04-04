@@ -1,0 +1,83 @@
+NAME
+    Perinci::Access::HTTP::Client - Riap::HTTP client
+
+VERSION
+    version 0.02
+
+SYNOPSIS
+     use Perinci::Access::HTTP::Client;
+     my $pa = Perinci::Access::HTTP::Client->new;
+
+     # list all functions in package
+     my $res = $pa->request(list => 'http://localhost:5000/api/',
+                            {uri=>'/Some/Module/', type=>'function'});
+     # -> [200, "OK", ['/Some/Module/mult2', '/Some/Module/mult2']]
+
+     # call function
+     my $res = $pa->request(call => 'http://localhost:5000/api/',
+                            {uri=>'/Some/Module/mult2', args=>{a=>2, b=>3}});
+     # -> [200, "OK", 6]
+
+     # get function metadata
+     $res = $pa->request(meta => 'http://localhost:5000/api/',
+                         {uri=>'/Foo/Bar/multn'});
+     # -> [200, "OK", {v=>1.1, summary=>'Multiple many numbers', ...}]
+
+DESCRIPTION
+    This class implements Riap::HTTP client.
+
+    This class uses Log::Any for logging.
+
+METHODS
+  PKG->new(%attrs) => OBJ
+    Instantiate object. Known attributes:
+
+    *   retries => INT (default 2)
+
+        Number of retries to do on network failure. Setting it to 0 will
+        disable retries.
+
+    *   retry_delay => INT (default 3)
+
+        Number of seconds to wait between retries.
+
+    *   lwp_implementor => STR
+
+        If specified, use this class for http LWP::Protocol::implementor().
+        For example, to access Unix socket server instead of a normal TCP
+        one, set this to 'LWP::Protocol::http::SocketUnix'.
+
+    *   log_level => INT (default 0 or from environment)
+
+        Will be fed into Riap request key 'loglevel' (if >0). Note that some
+        servers might forbid setting log level.
+
+        If TRACE environment variable is true, default log_level will be set
+        to 6. If DEBUG, 5. If VERBOSE, 4. If quiet, 1. Else 0.
+
+    *   log_callback => CODE
+
+        Pass log messages from the server to this subroutine. If not
+        specified, log messages will be "rethrown" into Log::Any logging
+        methods (e.g. $log->warn(), $log->debug(), etc).
+
+  $pa->request($action => $server_url, \%extra) => $res
+    Send Riap request to $server_url. Note that $server_url is the HTTP URL
+    of Riap server. You will need to specify code entity URI via "uri" key
+    in %extra.
+
+FAQ
+SEE ALSO
+    Perinci::Access::HTTP::Server
+
+    Riap, Rinci
+
+AUTHOR
+    Steven Haryanto <stevenharyanto@gmail.com>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2012 by Steven Haryanto.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+
