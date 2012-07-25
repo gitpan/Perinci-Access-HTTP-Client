@@ -7,7 +7,8 @@ use Module::Build 0.3601;
 
 my %module_build_args = (
   "build_requires" => {
-    "Module::Build" => "0.3601"
+    "Module::Build" => "0.3601",
+    "Test::More" => "0.96"
   },
   "configure_requires" => {
     "Module::Build" => "0.3601"
@@ -17,16 +18,15 @@ my %module_build_args = (
     "Steven Haryanto <stevenharyanto\@gmail.com>"
   ],
   "dist_name" => "Perinci-Access-HTTP-Client",
-  "dist_version" => "0.02",
+  "dist_version" => "0.03",
   "license" => "perl",
   "module_name" => "Perinci::Access::HTTP::Client",
   "recommends" => {},
   "recursive_test_files" => 1,
   "requires" => {
     "LWP::UserAgent" => 0,
-    "Perinci::Access::Base" => "0.17",
+    "Perinci::Access::Base" => "0.19",
     "Riap" => "1.1.11",
-    "Test::More" => "0.96",
     "perl" => "5.010001"
   },
   "script_files" => []

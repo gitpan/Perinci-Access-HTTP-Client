@@ -1,6 +1,13 @@
 Revision history for Perinci-Access-HTTP-Client
 
-0.02     2012-04-04
+0.03     2012-07-25 (SHARYANTO)
+
+         - Sleep (retry_delay) only when going to retry.
+
+         - Adjust to newer Perinci::Access::Base.
+
+
+0.02     2012-04-04 (SHARYANTO)
 
          [INCOMPATIBLE CHANGES]
 
@@ -8,6 +15,6 @@ Revision history for Perinci-Access-HTTP-Client
          URL as object attribute.
 
 
-0.01     2012-04-04
+0.01     2012-04-04 (SHARYANTO)
 
          First release (adjusted from Sub-Spec-URI-http).

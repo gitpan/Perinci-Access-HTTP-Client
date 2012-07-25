@@ -7,19 +7,12 @@ use Log::Any '$log';
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
 sub _init {
-    #require Tie::Cache;
-
     my ($self) = @_;
-    $self->SUPER::_init();
-
-    # to cache wrapped result
-    #tie my(%cache), 'Tie::Cache', 100;
-    #$self->{_cache} = \%cache;
 
     # attributes
     $self->{retries}         //= 2;
@@ -85,7 +78,7 @@ sub request {
                         $data =~ s/^\[(\w+)\]//;
                         my $method = $1;
                         $method = "error" unless $method ~~ @logging_methods;
-                        $log->$method("[$server_url $rreq->{uri}] $data");
+                        $log->$method("[$server_url] $data");
                     }
                     return 1;
                 } elsif ($chunk_type eq 'R') {
@@ -163,10 +156,13 @@ sub request {
             $log->warnf("Network failure (%d - %s), retrying ...",
                         $http0_res->code, $http0_res->message);
             $do_retry++;
-            sleep $self->{retry_delay};
         }
 
-        last unless $do_retry && $attempts++ < $self->{retries};
+        if ($do_retry && $attempts++ < $self->{retries}) {
+            sleep $self->{retry_delay};
+        } else {
+            last;
+        }
     }
 
     return [500, "Network failure: ".$http0_res->code." - ".$http0_res->message]
@@ -201,7 +197,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
