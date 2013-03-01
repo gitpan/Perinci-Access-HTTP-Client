@@ -7,7 +7,7 @@ use Log::Any '$log';
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.03'; # VERSION
+our $VERSION = '0.04'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -30,21 +30,25 @@ sub _init {
 }
 
 sub request {
-    require LWP::UserAgent;
-    require JSON;
 
-    my ($self, $action, $server_url, $extra) = @_;
-    $log->tracef("=> %s\::request(action=%s, server_url=%s, extra=%s)",
-                 __PACKAGE__, $action, $server_url, $extra);
+    my ($self, $action, $server_url, $extra, $copts) = @_;
+    $log->tracef(
+        "=> %s\::request(action=%s, server_url=%s, extra=%s, copts=%s)",
+        __PACKAGE__, $action, $server_url, $extra, $copts);
+    $copts //= {};
     return [400, "Please specify server_url"] unless $server_url;
     my $rreq = { action=>$action, %{$extra // {}} };
     my $res = $self->check_request($rreq);
     return $res if $res;
 
-    state $json = JSON->new->allow_nonref;
+    state $json = do {
+        require JSON;
+        JSON->new->allow_nonref;
+    };
 
     state $ua;
     if (!$ua) {
+        require LWP::UserAgent;
         $ua = LWP::UserAgent->new;
         $ua->env_proxy;
         $ua->set_my_handler(
@@ -97,6 +101,19 @@ sub request {
     # need to set due to closure?
     $ua->{__body}     = [];
     $ua->{__in_body}  = 0;
+
+    if (defined $copts->{user}) {
+        require URI;
+        my $suri = URI->new($server_url);
+        my $host = $suri->host;
+        my $port = $suri->port;
+        $ua->credentials(
+            "$host:$port",
+            $copts->{realm} // "restricted area",
+            $copts->{user},
+            $copts->{password}
+        );
+    }
 
     my $http_req = HTTP::Request->new(POST => $server_url);
     for (keys %$rreq) {
@@ -173,7 +190,7 @@ sub request {
         unless @{$ua->{__body}};
 
     eval {
-        #$log->debugf("body: %s", $ua->{__body});
+        $log->debugf("body: %s", $ua->{__body});
         $res = $json->decode(join "", @{$ua->{__body}});
     };
     my $eval_err = $@;
@@ -197,7 +214,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 
@@ -218,6 +235,10 @@ version 0.03
  $res = $pa->request(meta => 'http://localhost:5000/api/',
                      {uri=>'/Foo/Bar/multn'});
  # -> [200, "OK", {v=>1.1, summary=>'Multiple many numbers', ...}]
+
+ # pass HTTP credentials
+ my $res = $pa->request(call => '...', {...}, {user=>'admin', password=>'123'});
+ # -> [200, "OK", 'result']
 
 =head1 DESCRIPTION
 
@@ -266,12 +287,45 @@ $log->debug(), etc).
 
 =back
 
-=head2 $pa->request($action => $server_url, \%extra) => $res
+=head2 $pa->request($action => $server_url, \%extra, \%copts) => $res
 
 Send Riap request to $server_url. Note that $server_url is the HTTP URL of Riap
 server. You will need to specify code entity URI via C<uri> key in %extra.
 
+C<%extra> is optional and contains Riap request keys (except C<action>, which is
+ taken from C<$action>).
+
+C<%copts> is optional and contains Riap client's options. Currently known
+options:
+
+=over
+
+=item * realm => STR
+
+For HTTP basic authentication. Defaults to "restricted area" (this is the
+default realm used by L<Plack::Middleware::Auth::Basic>).
+
+=item * user => STR
+
+For HTTP basic authentication.
+
+=item * password => STR
+
+For HTTP basic authentication.
+
+=back
+
 =head1 FAQ
+
+=head1 TODO
+
+=over
+
+=item * copt: hook/handler to pass to $ua
+
+=item * copt: use custom $ua object
+
+=back
 
 =head1 SEE ALSO
 
@@ -285,7 +339,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

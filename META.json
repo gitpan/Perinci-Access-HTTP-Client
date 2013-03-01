@@ -4,7 +4,7 @@
       "Steven Haryanto <stevenharyanto@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300006, CPAN::Meta::Converter version 2.113640",
+   "generated_by" : "Dist::Zilla version 4.300028, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -24,17 +24,23 @@
             "Module::Build" : "0.3601"
          }
       },
-      "runtime" : {
+      "develop" : {
          "requires" : {
-            "LWP::UserAgent" : 0,
-            "Perinci::Access::Base" : "0.19",
-            "Riap" : "v1.1.11",
-            "perl" : "5.010001"
+            "Pod::Coverage::TrustPod" : "0",
+            "Test::Pod" : "1.41",
+            "Test::Pod::Coverage" : "1.08",
+            "Test::Rinci" : "0.01"
          }
       },
-      "test" : {
+      "runtime" : {
          "requires" : {
-            "Test::More" : "0.96"
+            "JSON" : "0",
+            "LWP::UserAgent" : "0",
+            "Log::Any" : "0",
+            "Perinci::Access::Base" : "0.19",
+            "Riap" : "v1.1.11",
+            "URI" : "0",
+            "perl" : "5.010001"
          }
       }
    },
@@ -45,6 +51,6 @@
          "url" : "http://github.com/sharyanto/perl-Perinci-Access-HTTP-Client"
       }
    },
-   "version" : "0.03"
+   "version" : "0.04"
 }
 

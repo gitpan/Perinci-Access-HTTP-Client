@@ -2,7 +2,7 @@ NAME
     Perinci::Access::HTTP::Client - Riap::HTTP client
 
 VERSION
-    version 0.03
+    version 0.04
 
 SYNOPSIS
      use Perinci::Access::HTTP::Client;
@@ -22,6 +22,10 @@ SYNOPSIS
      $res = $pa->request(meta => 'http://localhost:5000/api/',
                          {uri=>'/Foo/Bar/multn'});
      # -> [200, "OK", {v=>1.1, summary=>'Multiple many numbers', ...}]
+
+     # pass HTTP credentials
+     my $res = $pa->request(call => '...', {...}, {user=>'admin', password=>'123'});
+     # -> [200, "OK", 'result']
 
 DESCRIPTION
     This class implements Riap::HTTP client.
@@ -61,12 +65,36 @@ METHODS
         specified, log messages will be "rethrown" into Log::Any logging
         methods (e.g. $log->warn(), $log->debug(), etc).
 
-  $pa->request($action => $server_url, \%extra) => $res
+  $pa->request($action => $server_url, \%extra, \%copts) => $res
     Send Riap request to $server_url. Note that $server_url is the HTTP URL
     of Riap server. You will need to specify code entity URI via "uri" key
     in %extra.
 
+    %extra is optional and contains Riap request keys (except "action",
+    which is taken from $action).
+
+    %copts is optional and contains Riap client's options. Currently known
+    options:
+
+    *   realm => STR
+
+        For HTTP basic authentication. Defaults to "restricted area" (this
+        is the default realm used by Plack::Middleware::Auth::Basic).
+
+    *   user => STR
+
+        For HTTP basic authentication.
+
+    *   password => STR
+
+        For HTTP basic authentication.
+
 FAQ
+TODO
+    *   copt: hook/handler to pass to $ua
+
+    *   copt: use custom $ua object
+
 SEE ALSO
     Perinci::Access::HTTP::Server
 
@@ -76,7 +104,7 @@ AUTHOR
     Steven Haryanto <stevenharyanto@gmail.com>
 
 COPYRIGHT AND LICENSE
-    This software is copyright (c) 2012 by Steven Haryanto.
+    This software is copyright (c) 2013 by Steven Haryanto.
 
     This is free software; you can redistribute it and/or modify it under
     the same terms as the Perl 5 programming language system itself.
