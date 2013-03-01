@@ -1,5 +1,10 @@
 Revision history for Perinci-Access-HTTP-Client
 
+0.05     2013-03-01 (SHARYANTO)
+
+         - Send 'ua' Riap request key to identify client ("Perinci/x.yy").
+
+
 0.04     2013-03-01 (SHARYANTO)
 
          [ENHANCEMENTS]

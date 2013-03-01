@@ -7,7 +7,7 @@ use Log::Any '$log';
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.04'; # VERSION
+our $VERSION = '0.05'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -37,7 +37,9 @@ sub request {
         __PACKAGE__, $action, $server_url, $extra, $copts);
     $copts //= {};
     return [400, "Please specify server_url"] unless $server_url;
-    my $rreq = { action=>$action, %{$extra // {}} };
+    my $rreq = { action=>$action,
+                 ua=>"Perinci/".($Perinci::Access::HTTP::Client::VERSION//"?"),
+                 %{$extra // {}} };
     my $res = $self->check_request($rreq);
     return $res if $res;
 
@@ -214,7 +216,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 SYNOPSIS
 
