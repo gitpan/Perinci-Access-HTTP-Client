@@ -1,13 +1,13 @@
 package Perinci::Access::HTTP::Client;
 
-use 5.010;
+use 5.010001;
 use strict;
 use warnings;
 use Log::Any '$log';
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -31,11 +31,10 @@ sub _init {
 
 sub request {
 
-    my ($self, $action, $server_url, $extra, $copts) = @_;
+    my ($self, $action, $server_url, $extra) = @_;
     $log->tracef(
-        "=> %s\::request(action=%s, server_url=%s, extra=%s, copts=%s)",
-        __PACKAGE__, $action, $server_url, $extra, $copts);
-    $copts //= {};
+        "=> %s\::request(action=%s, server_url=%s, extra=%s)",
+        __PACKAGE__, $action, $server_url, $extra);
     return [400, "Please specify server_url"] unless $server_url;
     my $rreq = { action=>$action,
                  ua=>"Perinci/".($Perinci::Access::HTTP::Client::VERSION//"?"),
@@ -104,16 +103,16 @@ sub request {
     $ua->{__body}     = [];
     $ua->{__in_body}  = 0;
 
-    if (defined $copts->{user}) {
+    if (defined $self->{user}) {
         require URI;
         my $suri = URI->new($server_url);
         my $host = $suri->host;
         my $port = $suri->port;
         $ua->credentials(
             "$host:$port",
-            $copts->{realm} // "restricted area",
-            $copts->{user},
-            $copts->{password}
+            $self->{realm} // "restricted area",
+            $self->{user},
+            $self->{password}
         );
     }
 
@@ -216,7 +215,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 
@@ -239,7 +238,8 @@ version 0.05
  # -> [200, "OK", {v=>1.1, summary=>'Multiple many numbers', ...}]
 
  # pass HTTP credentials
- my $res = $pa->request(call => '...', {...}, {user=>'admin', password=>'123'});
+ my $pa = Perinci::Access::HTTP::Client->new(user => 'admin', password=>'123');
+ my $res = $pa->request(call => '...', {...});
  # -> [200, "OK", 'result']
 
 =head1 DESCRIPTION
@@ -250,13 +250,32 @@ This class uses L<Log::Any> for logging.
 
 =for Pod::Coverage ^action_.+
 
+=head1 ATTRIBUTES
+
+=over
+
+=item * realm => STR
+
+For HTTP basic authentication. Defaults to "restricted area" (this is the
+default realm used by L<Plack::Middleware::Auth::Basic>).
+
+=item * user => STR
+
+For HTTP basic authentication.
+
+=item * password => STR
+
+For HTTP basic authentication.
+
+=back
+
 =head1 METHODS
 
 =head2 PKG->new(%attrs) => OBJ
 
 Instantiate object. Known attributes:
 
-=over 4
+=over
 
 =item * retries => INT (default 2)
 
@@ -289,33 +308,13 @@ $log->debug(), etc).
 
 =back
 
-=head2 $pa->request($action => $server_url, \%extra, \%copts) => $res
+=head2 $pa->request($action => $server_url, \%extra_keys) => $res
 
 Send Riap request to $server_url. Note that $server_url is the HTTP URL of Riap
-server. You will need to specify code entity URI via C<uri> key in %extra.
+server. You will need to specify code entity URI via C<uri> key in %extra_keys.
 
-C<%extra> is optional and contains Riap request keys (except C<action>, which is
- taken from C<$action>).
-
-C<%copts> is optional and contains Riap client's options. Currently known
-options:
-
-=over
-
-=item * realm => STR
-
-For HTTP basic authentication. Defaults to "restricted area" (this is the
-default realm used by L<Plack::Middleware::Auth::Basic>).
-
-=item * user => STR
-
-For HTTP basic authentication.
-
-=item * password => STR
-
-For HTTP basic authentication.
-
-=back
+C<%extra_keys> is optional and contains additional Riap request keys (except
+ C<action>, which is taken from C<$action>).
 
 =head1 FAQ
 
@@ -323,9 +322,9 @@ For HTTP basic authentication.
 
 =over
 
-=item * copt: hook/handler to pass to $ua
+=item * attr: hook/handler to pass to $ua
 
-=item * copt: use custom $ua object
+=item * attr: use custom $ua object
 
 =back
 

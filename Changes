@@ -1,5 +1,13 @@
 Revision history for Perinci-Access-HTTP-Client
 
+0.06     2013-03-15 (SHARYANTO)
+
+         [INCOMPATIBLE CHANGES]
+
+         - Instead of passing HTTP auth credentials via \%opts in request(), it
+           is now stored in object's attributes, for convenience.
+
+
 0.05     2013-03-01 (SHARYANTO)
 
          - Send 'ua' Riap request key to identify client ("Perinci/x.yy").

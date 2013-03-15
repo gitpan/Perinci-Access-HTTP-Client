@@ -2,7 +2,7 @@ NAME
     Perinci::Access::HTTP::Client - Riap::HTTP client
 
 VERSION
-    version 0.05
+    version 0.06
 
 SYNOPSIS
      use Perinci::Access::HTTP::Client;
@@ -24,13 +24,28 @@ SYNOPSIS
      # -> [200, "OK", {v=>1.1, summary=>'Multiple many numbers', ...}]
 
      # pass HTTP credentials
-     my $res = $pa->request(call => '...', {...}, {user=>'admin', password=>'123'});
+     my $pa = Perinci::Access::HTTP::Client->new(user => 'admin', password=>'123');
+     my $res = $pa->request(call => '...', {...});
      # -> [200, "OK", 'result']
 
 DESCRIPTION
     This class implements Riap::HTTP client.
 
     This class uses Log::Any for logging.
+
+ATTRIBUTES
+    *   realm => STR
+
+        For HTTP basic authentication. Defaults to "restricted area" (this
+        is the default realm used by Plack::Middleware::Auth::Basic).
+
+    *   user => STR
+
+        For HTTP basic authentication.
+
+    *   password => STR
+
+        For HTTP basic authentication.
 
 METHODS
   PKG->new(%attrs) => OBJ
@@ -65,35 +80,19 @@ METHODS
         specified, log messages will be "rethrown" into Log::Any logging
         methods (e.g. $log->warn(), $log->debug(), etc).
 
-  $pa->request($action => $server_url, \%extra, \%copts) => $res
+  $pa->request($action => $server_url, \%extra_keys) => $res
     Send Riap request to $server_url. Note that $server_url is the HTTP URL
     of Riap server. You will need to specify code entity URI via "uri" key
-    in %extra.
+    in %extra_keys.
 
-    %extra is optional and contains Riap request keys (except "action",
-    which is taken from $action).
-
-    %copts is optional and contains Riap client's options. Currently known
-    options:
-
-    *   realm => STR
-
-        For HTTP basic authentication. Defaults to "restricted area" (this
-        is the default realm used by Plack::Middleware::Auth::Basic).
-
-    *   user => STR
-
-        For HTTP basic authentication.
-
-    *   password => STR
-
-        For HTTP basic authentication.
+    %extra_keys is optional and contains additional Riap request keys
+    (except "action", which is taken from $action).
 
 FAQ
 TODO
-    *   copt: hook/handler to pass to $ua
+    *   attr: hook/handler to pass to $ua
 
-    *   copt: use custom $ua object
+    *   attr: use custom $ua object
 
 SEE ALSO
     Perinci::Access::HTTP::Server
