@@ -24,4 +24,4 @@ requires:
 resources:
   homepage: http://search.cpan.org/dist/Perinci-Access-HTTP-Client/
   repository: http://github.com/sharyanto/perl-Perinci-Access-HTTP-Client
-version: 0.07
+version: 0.08

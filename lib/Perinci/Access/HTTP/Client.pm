@@ -7,7 +7,7 @@ use Log::Any '$log';
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.07'; # VERSION
+our $VERSION = '0.08'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -48,58 +48,57 @@ sub request {
     };
 
     state $ua;
+    state $callback = sub {
+        my ($resp, $ua, $h, $data) = @_;
+
+        # we collect HTTP response body into _buffer first. if
+        # __mark_log is set then we need to separate each log message
+        # and response part. otherwise, everything just needs to go to
+        # __body.
+        #$log->tracef("got resp: %s (%d bytes)", $data, length($data));
+
+        if ($ua->{__mark_log}) {
+            $ua->{__buffer} .= $data;
+            if ($ua->{__buffer} =~ /\A([lr])(\d+) /) {
+                my ($chtype, $chlen) = ($1, $2);
+                # not enough data yet
+                my $hlen = 1+length($chlen)+1;
+                return 1 unless length($ua->{__buffer}) >= $hlen + $chlen;
+                my $chdata = substr($ua->{__buffer}, $hlen, $chlen);
+                substr($ua->{__buffer}, 0, $hlen+$chlen) = "";
+                if ($chtype eq 'l') {
+                    if ($self->{log_callback}) {
+                        $self->{log_callback}->($chdata);
+                    } else {
+                        $chdata =~ s/^\[(\w+)\]//;
+                        my $method = $1;
+                        $method = "error" unless $method ~~ @logging_methods;
+                        $log->$method("[$server_url] $chdata");
+                    }
+                    return 1;
+                } elsif ($chtype eq 'r') {
+                    $ua->{__body} .= $chdata;
+                } else {
+                    $ua->{__body} = "[500,\"Unknown chunk type $chtype".
+                        "try updating ${\(__PACKAGE__)} version\"]";
+                    return 0;
+                }
+            } else {
+                $ua->{__body} = "[500,\"Invalid response from server,".
+                    " server is probably using older version of ".
+                        "Riap::HTTP server library\"]";
+                return 0;
+            }
+        } else {
+            $ua->{__body} .= $data;
+        }
+    };
+
     if (!$ua) {
         require LWP::UserAgent;
         $ua = LWP::UserAgent->new;
         $ua->env_proxy;
-        $ua->set_my_handler(
-            "response_data",
-            sub {
-                my ($resp, $ua, $h, $data) = @_;
-
-                # we collect HTTP response body into _buffer first. if
-                # __mark_log is set then we need to separate each log message
-                # and response part. otherwise, everything just needs to go to
-                # __body.
-                #$log->tracef("got resp: %s (%d bytes)", $data, length($data));
-
-                if ($ua->{__mark_log}) {
-                    $ua->{__buffer} .= $data;
-                    if ($ua->{__buffer} =~ /\A([lr])(\d+) /) {
-                        my ($chtype, $chlen) = ($1, $2);
-                        # not enough data yet
-                        my $hlen = 1+length($chlen)+1;
-                        return 1 unless length($ua->{__buffer}) >= $hlen + $chlen;
-                        my $chdata = substr($ua->{__buffer}, $hlen, $chlen);
-                        substr($ua->{__buffer}, 0, $hlen+$chlen) = "";
-                        if ($chtype eq 'l') {
-                            if ($self->{log_callback}) {
-                                $self->{log_callback}->($chdata);
-                            } else {
-                                $chdata =~ s/^\[(\w+)\]//;
-                                my $method = $1;
-                                $method = "error" unless $method ~~ @logging_methods;
-                                $log->$method("[$server_url] $chdata");
-                            }
-                            return 1;
-                        } elsif ($chtype eq 'r') {
-                            $ua->{__body} .= $chdata;
-                        } else {
-                            $ua->{__body} = "[500,\"Unknown chunk type $chtype".
-                                "try updating ${\(__PACKAGE__)} version\"]";
-                            return 0;
-                        }
-                    } else {
-                        $ua->{__body} = "[500,\"Invalid response from server,".
-                            " server is probably using older version of ".
-                                "Riap::HTTP server library\"]";
-                        return 0;
-                    }
-                } else {
-                    $ua->{__body} .= $data;
-                }
-            }
-        );
+        $ua->set_my_handler("response_data", $callback);
     }
 
     # need to set due to closure?
@@ -188,6 +187,10 @@ sub request {
 
     return [500, "Network failure: ".$http0_res->code." - ".$http0_res->message]
         unless $http0_res->is_success;
+
+    # empty __buffer
+    $callback->($http0_res, $ua, undef, "") if length($ua->{__buffer});
+
     return [500, "Empty response from server (1)"]
         if !length($http0_res->content);
     return [500, "Empty response from server (2)"]
@@ -218,7 +221,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 SYNOPSIS
 
