@@ -1,5 +1,16 @@
 Revision history for Perinci-Access-HTTP-Client
 
+0.07     2013-04-04 (SHARYANTO)
+
+         [INCOMPATIBLE CHANGES]
+
+         - Adjust to Perinci-Access-HTTP-Server 0.27. The way log messages is
+           sent to the client is now different (chunk type is now 'l'/'r' +
+           <bytes> + ' ' instead of just 'L'/'R' which is not reliable because
+           HTTP chunking is not done 1:1 on different PSGI servers. This client
+           is thus incompatible with older server.
+
+
 0.06     2013-03-15 (SHARYANTO)
 
          [INCOMPATIBLE CHANGES]

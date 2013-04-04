@@ -7,7 +7,7 @@ use Log::Any '$log';
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.06'; # VERSION
+our $VERSION = '0.07'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -57,51 +57,54 @@ sub request {
             sub {
                 my ($resp, $ua, $h, $data) = @_;
 
-                my $body     = $ua->{__body};
-                my $in_body  = $ua->{__in_body};
-                my $mark_log = $ua->{__mark_log};
-
+                # we collect HTTP response body into _buffer first. if
+                # __mark_log is set then we need to separate each log message
+                # and response part. otherwise, everything just needs to go to
+                # __body.
                 #$log->tracef("got resp: %s (%d bytes)", $data, length($data));
-                # LWP::UserAgent can chop a single chunk from server into
-                # several chunks
-                if ($in_body) {
-                    push @$body, $data;
-                    return 1;
-                }
 
-                my $chunk_type;
-                if ($mark_log) {
-                    $data =~ s/(.)//;
-                    $chunk_type = $1;
-                } else {
-                    $chunk_type = 'R';
-                }
-                if ($chunk_type eq 'L') {
-                    if ($self->{log_callback}) {
-                        $self->{log_callback}->($data);
+                if ($ua->{__mark_log}) {
+                    $ua->{__buffer} .= $data;
+                    if ($ua->{__buffer} =~ /\A([lr])(\d+) /) {
+                        my ($chtype, $chlen) = ($1, $2);
+                        # not enough data yet
+                        my $hlen = 1+length($chlen)+1;
+                        return 1 unless length($ua->{__buffer}) >= $hlen + $chlen;
+                        my $chdata = substr($ua->{__buffer}, $hlen, $chlen);
+                        substr($ua->{__buffer}, 0, $hlen+$chlen) = "";
+                        if ($chtype eq 'l') {
+                            if ($self->{log_callback}) {
+                                $self->{log_callback}->($chdata);
+                            } else {
+                                $chdata =~ s/^\[(\w+)\]//;
+                                my $method = $1;
+                                $method = "error" unless $method ~~ @logging_methods;
+                                $log->$method("[$server_url] $chdata");
+                            }
+                            return 1;
+                        } elsif ($chtype eq 'r') {
+                            $ua->{__body} .= $chdata;
+                        } else {
+                            $ua->{__body} = "[500,\"Unknown chunk type $chtype".
+                                "try updating ${\(__PACKAGE__)} version\"]";
+                            return 0;
+                        }
                     } else {
-                        $data =~ s/^\[(\w+)\]//;
-                        my $method = $1;
-                        $method = "error" unless $method ~~ @logging_methods;
-                        $log->$method("[$server_url] $data");
+                        $ua->{__body} = "[500,\"Invalid response from server,".
+                            " server is probably using older version of ".
+                                "Riap::HTTP server library\"]";
+                        return 0;
                     }
-                    return 1;
-                } elsif ($chunk_type eq 'R') {
-                    $in_body++;
-                    push @$body, $data;
-                    return 1;
                 } else {
-                    $body = ['[500, "Unknown chunk type from server: '.
-                                 $chunk_type.'"]'];
-                    return 0;
+                    $ua->{__body} .= $data;
                 }
             }
         );
     }
 
     # need to set due to closure?
-    $ua->{__body}     = [];
-    $ua->{__in_body}  = 0;
+    $ua->{__buffer}    = "";
+    $ua->{__body}      = "";
 
     if (defined $self->{user}) {
         require URI;
@@ -188,11 +191,11 @@ sub request {
     return [500, "Empty response from server (1)"]
         if !length($http0_res->content);
     return [500, "Empty response from server (2)"]
-        unless @{$ua->{__body}};
+        unless length($ua->{__body});
 
     eval {
-        $log->debugf("body: %s", $ua->{__body});
-        $res = $json->decode(join "", @{$ua->{__body}});
+        $log->tracef("body: %s", $ua->{__body});
+        $res = $json->decode($ua->{__body});
     };
     my $eval_err = $@;
     return [500, "Invalid JSON from server: $eval_err"] if $eval_err;
@@ -215,7 +218,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 SYNOPSIS
 
