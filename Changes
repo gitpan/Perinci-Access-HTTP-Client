@@ -1,5 +1,12 @@
 Revision history for Perinci-Access-HTTP-Client
 
+0.09     2013-08-11 (SHARYANTO)
+
+         [ENHANCEMENTS]
+
+         - Observe environment variables PERINCI_HTTP_{USER,PASSWORD}.
+
+
 0.08     2013-04-04 (SHARYANTO)
 
          [BUG FIXES]
@@ -49,10 +56,10 @@ Revision history for Perinci-Access-HTTP-Client
 
          [INCOMPATIBLE CHANGES]
 
-         Follow Perinci::Access request() interface instead of putting server
-         URL as object attribute.
+         - Follow Perinci::Access request() interface instead of putting server
+           URL as object attribute.
 
 
 0.01     2012-04-04 (SHARYANTO)
 
-         First release (adjusted from Sub-Spec-URI-http).
+         - First release (adjusted from Sub-Spec-URI-http).

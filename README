@@ -2,7 +2,7 @@ NAME
     Perinci::Access::HTTP::Client - Riap::HTTP client
 
 VERSION
-    version 0.08
+    version 0.09
 
 SYNOPSIS
      use Perinci::Access::HTTP::Client;
@@ -41,11 +41,13 @@ ATTRIBUTES
 
     *   user => STR
 
-        For HTTP basic authentication.
+        For HTTP basic authentication. Default will be taken from
+        environment "PERINCI_HTTP_USER".
 
     *   password => STR
 
-        For HTTP basic authentication.
+        For HTTP basic authentication. Default will be taken from
+        environment "PERINCI_HTTP_PASSWORD".
 
 METHODS
   PKG->new(%attrs) => OBJ
@@ -87,6 +89,11 @@ METHODS
 
     %extra_keys is optional and contains additional Riap request keys
     (except "action", which is taken from $action).
+
+ENVIRONMENT
+    "PERINCI_HTTP_USER".
+
+    "PERINCI_HTTP_PASSWORD".
 
 FAQ
 TODO

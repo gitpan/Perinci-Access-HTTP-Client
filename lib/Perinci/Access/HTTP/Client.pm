@@ -7,7 +7,7 @@ use Log::Any '$log';
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -27,6 +27,8 @@ sub _init {
                             0;
     }
     $self->{log_callback}    //= undef;
+    $self->{user}            //= $ENV{PERINCI_HTTP_USER};
+    $self->{password}        //= $ENV{PERINCI_HTTP_PASSWORD};
 }
 
 sub request {
@@ -210,9 +212,8 @@ sub request {
 1;
 # ABSTRACT: Riap::HTTP client
 
-
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -221,7 +222,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.08
+version 0.09
 
 =head1 SYNOPSIS
 
@@ -267,11 +268,13 @@ default realm used by L<Plack::Middleware::Auth::Basic>).
 
 =item * user => STR
 
-For HTTP basic authentication.
+For HTTP basic authentication. Default will be taken from environment
+C<PERINCI_HTTP_USER>.
 
 =item * password => STR
 
-For HTTP basic authentication.
+For HTTP basic authentication. Default will be taken from environment
+C<PERINCI_HTTP_PASSWORD>.
 
 =back
 
@@ -322,6 +325,12 @@ server. You will need to specify code entity URI via C<uri> key in %extra_keys.
 C<%extra_keys> is optional and contains additional Riap request keys (except
  C<action>, which is taken from C<$action>).
 
+=head1 ENVIRONMENT
+
+C<PERINCI_HTTP_USER>.
+
+C<PERINCI_HTTP_PASSWORD>.
+
 =head1 FAQ
 
 =head1 TODO
@@ -352,4 +361,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
