@@ -9,7 +9,7 @@ use Scalar::Util qw(blessed);
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.10'; # VERSION
+our $VERSION = '0.11'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -214,7 +214,7 @@ sub parse_url {
     require URI;
 
     my ($self, $uri) = @_;
-    return [400, "Please specify url"] unless $uri;
+    die "Please specify url" unless $uri;
     $uri = URI->new($uri) unless blessed($uri);
 
     my $res = $self->request(info => $uri);
@@ -238,7 +238,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =head1 SYNOPSIS
 
