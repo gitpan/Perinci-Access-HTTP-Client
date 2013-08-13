@@ -2,11 +2,13 @@ NAME
     Perinci::Access::HTTP::Client - Riap::HTTP client
 
 VERSION
-    version 0.09
+    version 0.10
 
 SYNOPSIS
      use Perinci::Access::HTTP::Client;
      my $pa = Perinci::Access::HTTP::Client->new;
+
+     ## perform Riap requests
 
      # list all functions in package
      my $res = $pa->request(list => 'http://localhost:5000/api/',
@@ -14,8 +16,8 @@ SYNOPSIS
      # -> [200, "OK", ['/Some/Module/mult2', '/Some/Module/mult2']]
 
      # call function
-     my $res = $pa->request(call => 'http://localhost:5000/api/',
-                            {uri=>'/Some/Module/mult2', args=>{a=>2, b=>3}});
+     $res = $pa->request(call => 'http://localhost:5000/api/',
+                         {uri=>'/Some/Module/mult2', args=>{a=>2, b=>3}});
      # -> [200, "OK", 6]
 
      # get function metadata
@@ -27,6 +29,9 @@ SYNOPSIS
      my $pa = Perinci::Access::HTTP::Client->new(user => 'admin', password=>'123');
      my $res = $pa->request(call => '...', {...});
      # -> [200, "OK", 'result']
+
+     ## parse server URL
+     $res = $pa->parse_url("https://cpanlists.org/api/"); # {proto=>"https", path=>"/App/cpanlists/Server/"}
 
 DESCRIPTION
     This class implements Riap::HTTP client.
@@ -90,6 +95,7 @@ METHODS
     %extra_keys is optional and contains additional Riap request keys
     (except "action", which is taken from $action).
 
+  $pa->parse_url($server_url) => HASH
 ENVIRONMENT
     "PERINCI_HTTP_USER".
 

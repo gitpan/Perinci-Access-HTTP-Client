@@ -5,9 +5,11 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
+use Scalar::Util qw(blessed);
+
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -32,7 +34,6 @@ sub _init {
 }
 
 sub request {
-
     my ($self, $action, $server_url, $extra) = @_;
     $log->tracef(
         "=> %s\::request(action=%s, server_url=%s, extra=%s)",
@@ -209,6 +210,21 @@ sub request {
     $res;
 }
 
+sub parse_url {
+    require URI;
+
+    my ($self, $uri) = @_;
+    return [400, "Please specify url"] unless $uri;
+    $uri = URI->new($uri) unless blessed($uri);
+
+    my $res = $self->request(info => $uri);
+    die "Can't 'info' on $uri: $res->[0] - $res->[1]" unless $res->[0] == 200;
+
+    my $resuri = URI->new($res->[2]{uri});
+
+    {proto=>$uri->scheme, path=>$resuri->path};
+}
+
 1;
 # ABSTRACT: Riap::HTTP client
 
@@ -222,12 +238,14 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 SYNOPSIS
 
  use Perinci::Access::HTTP::Client;
  my $pa = Perinci::Access::HTTP::Client->new;
+
+ ## perform Riap requests
 
  # list all functions in package
  my $res = $pa->request(list => 'http://localhost:5000/api/',
@@ -235,8 +253,8 @@ version 0.09
  # -> [200, "OK", ['/Some/Module/mult2', '/Some/Module/mult2']]
 
  # call function
- my $res = $pa->request(call => 'http://localhost:5000/api/',
-                        {uri=>'/Some/Module/mult2', args=>{a=>2, b=>3}});
+ $res = $pa->request(call => 'http://localhost:5000/api/',
+                     {uri=>'/Some/Module/mult2', args=>{a=>2, b=>3}});
  # -> [200, "OK", 6]
 
  # get function metadata
@@ -248,6 +266,9 @@ version 0.09
  my $pa = Perinci::Access::HTTP::Client->new(user => 'admin', password=>'123');
  my $res = $pa->request(call => '...', {...});
  # -> [200, "OK", 'result']
+
+ ## parse server URL
+ $res = $pa->parse_url("https://cpanlists.org/api/"); # {proto=>"https", path=>"/App/cpanlists/Server/"}
 
 =head1 DESCRIPTION
 
@@ -324,6 +345,8 @@ server. You will need to specify code entity URI via C<uri> key in %extra_keys.
 
 C<%extra_keys> is optional and contains additional Riap request keys (except
  C<action>, which is taken from C<$action>).
+
+=head2 $pa->parse_url($server_url) => HASH
 
 =head1 ENVIRONMENT
 
