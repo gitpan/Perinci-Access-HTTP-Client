@@ -17,7 +17,7 @@ my %module_build_args = (
     "Steven Haryanto <stevenharyanto\@gmail.com>"
   ],
   "dist_name" => "Perinci-Access-HTTP-Client",
-  "dist_version" => "0.11",
+  "dist_version" => "0.12",
   "license" => "perl",
   "module_name" => "Perinci::Access::HTTP::Client",
   "recommends" => {},
@@ -26,17 +26,13 @@ my %module_build_args = (
     "JSON" => 0,
     "LWP::UserAgent" => 0,
     "Log::Any" => 0,
-    "Perinci::Access::Base" => "0.19",
+    "Perinci::Access::Base" => "0.29",
     "Riap" => "v1.1.11",
     "URI" => 0,
     "perl" => "5.010001"
   },
   "script_files" => [],
-  "test_requires" => {
-    "Capture::Tiny" => 0,
-    "Test::More" => "0.88",
-    "blib" => 0
-  }
+  "test_requires" => {}
 );
 
 

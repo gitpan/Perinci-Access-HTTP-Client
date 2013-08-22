@@ -9,12 +9,14 @@ use Scalar::Util qw(blessed);
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.11'; # VERSION
+our $VERSION = '0.12'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
-sub _init {
-    my ($self) = @_;
+sub new {
+    my $class = shift;
+
+    my $self = $class->SUPER::new(@_);
 
     # attributes
     $self->{retries}         //= 2;
@@ -31,7 +33,12 @@ sub _init {
     $self->{log_callback}    //= undef;
     $self->{user}            //= $ENV{PERINCI_HTTP_USER};
     $self->{password}        //= $ENV{PERINCI_HTTP_PASSWORD};
+
+    $self;
 }
+
+# for older Perinci::Access::Base 0.28-, to remove later
+sub _init {}
 
 sub request {
     my ($self, $action, $server_url, $extra) = @_;
@@ -238,7 +245,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.11
+version 0.12
 
 =head1 SYNOPSIS
 

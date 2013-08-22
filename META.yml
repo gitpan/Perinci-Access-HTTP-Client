@@ -3,14 +3,11 @@ abstract: 'Riap::HTTP client'
 author:
   - 'Steven Haryanto <stevenharyanto@gmail.com>'
 build_requires:
-  Capture::Tiny: 0
   Module::Build: 0.3601
-  Test::More: 0.88
-  blib: 0
 configure_requires:
   Module::Build: 0.3601
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.132140'
+generated_by: 'Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.131560'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -20,11 +17,11 @@ requires:
   JSON: 0
   LWP::UserAgent: 0
   Log::Any: 0
-  Perinci::Access::Base: 0.19
+  Perinci::Access::Base: 0.29
   Riap: v1.1.11
   URI: 0
   perl: 5.010001
 resources:
   homepage: http://search.cpan.org/dist/Perinci-Access-HTTP-Client/
   repository: http://github.com/sharyanto/perl-Perinci-Access-HTTP-Client
-version: 0.11
+version: 0.12
