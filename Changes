@@ -1,5 +1,17 @@
 Revision history for Perinci-Access-HTTP-Client
 
+0.13     2013-11-26 (SHARYANTO)
+
+         [INCOMPATIBLE CHANGES]
+
+         - Replace URI with URI::Split in parse_url(). This causes
+           incompatibility because there is no longer URI object.
+
+         [BUG FIXES]
+
+         - Add 'use experimental smartmatch' for perl 5.18+.
+
+
 0.12     2013-08-22 (SHARYANTO)
 
          - No functional changes. Adjust to Perinci::Access::Base 0.29.

@@ -3,13 +3,14 @@ package Perinci::Access::HTTP::Client;
 use 5.010001;
 use strict;
 use warnings;
+use experimental 'smartmatch';
 use Log::Any '$log';
 
 use Scalar::Util qw(blessed);
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.12'; # VERSION
+our $VERSION = '0.13'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -124,7 +125,7 @@ sub request {
             "$host:$port",
             $self->{realm} // "restricted area",
             $self->{user},
-            $self->{password}
+            $self->{password},
         );
     }
 
@@ -218,18 +219,19 @@ sub request {
 }
 
 sub parse_url {
-    require URI;
+    require URI::Split;
 
     my ($self, $uri) = @_;
     die "Please specify url" unless $uri;
-    $uri = URI->new($uri) unless blessed($uri);
 
     my $res = $self->request(info => $uri);
     die "Can't 'info' on $uri: $res->[0] - $res->[1]" unless $res->[0] == 200;
 
-    my $resuri = URI->new($res->[2]{uri});
+    my $resuri = $res->[2]{uri};
+    my ($sch, $auth, $path) = URI::Split::uri_split($resuri);
+    $sch //= "pl";
 
-    {proto=>$uri->scheme, path=>$resuri->path};
+    {proto=>$sch, path=>$path};
 }
 
 1;
@@ -239,13 +241,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.12
+version 0.13
 
 =head1 SYNOPSIS
 
@@ -378,6 +382,22 @@ C<PERINCI_HTTP_PASSWORD>.
 L<Perinci::Access::HTTP::Server>
 
 L<Riap>, L<Rinci>
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Perinci-Access-HTTP-Client>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Perinci-Access-HTTP-Client>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Perinci-Access-HTTP-Client>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

@@ -2,7 +2,7 @@ NAME
     Perinci::Access::HTTP::Client - Riap::HTTP client
 
 VERSION
-    version 0.12
+    version 0.13
 
 SYNOPSIS
      use Perinci::Access::HTTP::Client;
@@ -111,6 +111,22 @@ SEE ALSO
     Perinci::Access::HTTP::Server
 
     Riap, Rinci
+
+HOMEPAGE
+    Please visit the project's homepage at
+    <https://metacpan.org/release/Perinci-Access-HTTP-Client>.
+
+SOURCE
+    Source repository is at
+    <https://github.com/sharyanto/perl-Perinci-Access-HTTP-Client>.
+
+BUGS
+    Please report any bugs or feature requests on the bugtracker website
+    <https://rt.cpan.org/Public/Dist/Display.html?Name=Perinci-Access-HTTP-C
+    lient>
+
+    When submitting a bug or request, please include a test-file or a patch
+    to an existing test-file that illustrates the bug or desired feature.
 
 AUTHOR
     Steven Haryanto <stevenharyanto@gmail.com>
