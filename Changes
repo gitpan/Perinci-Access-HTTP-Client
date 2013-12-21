@@ -1,5 +1,14 @@
 Revision history for Perinci-Access-HTTP-Client
 
+0.14     2013-12-21 (SHARYANTO)
+
+         - Support Riap::HTTP 1.1.22.
+
+         [BUG FIXES]
+
+         - Handle internal request retry when LWP gets 401 status.
+
+
 0.13     2013-11-26 (SHARYANTO)
 
          [INCOMPATIBLE CHANGES]

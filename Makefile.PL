@@ -24,7 +24,7 @@ my %WriteMakefileArgs = (
     "LWP::UserAgent" => 0,
     "Log::Any" => 0,
     "Perinci::Access::Base" => "0.29",
-    "Riap" => "v1.1.11",
+    "Riap" => "v1.1.22",
     "URI" => 0,
     "URI::Split" => 0,
     "experimental" => 0
@@ -35,7 +35,7 @@ my %WriteMakefileArgs = (
     "IPC::Open3" => 0,
     "Test::More" => 0
   },
-  "VERSION" => "0.13",
+  "VERSION" => "0.14",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -50,7 +50,7 @@ my %FallbackPrereqs = (
   "LWP::UserAgent" => 0,
   "Log::Any" => 0,
   "Perinci::Access::Base" => "0.29",
-  "Riap" => "v1.1.11",
+  "Riap" => "v1.1.22",
   "Test::More" => 0,
   "URI" => 0,
   "URI::Split" => 0,

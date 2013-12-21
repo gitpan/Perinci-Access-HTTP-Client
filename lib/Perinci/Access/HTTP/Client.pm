@@ -10,7 +10,7 @@ use Scalar::Util qw(blessed);
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.13'; # VERSION
+our $VERSION = '0.14'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -62,13 +62,14 @@ sub request {
     state $callback = sub {
         my ($resp, $ua, $h, $data) = @_;
 
-        # we collect HTTP response body into _buffer first. if
-        # __mark_log is set then we need to separate each log message
-        # and response part. otherwise, everything just needs to go to
-        # __body.
-        #$log->tracef("got resp: %s (%d bytes)", $data, length($data));
+        # we collect HTTP response body into __buffer first. if __mark_log is
+        # set then we need to separate each log message and response part.
+        # otherwise, everything just needs to go to __body.
 
-        if ($ua->{__mark_log}) {
+        #$log->tracef("got resp: %s (%d bytes)", $data, length($data));
+        #say sprintf("D:got resp: %s (%d bytes)", $data, length($data));
+
+        if ($ua->{__log_level}) {
             $ua->{__buffer} .= $data;
             if ($ua->{__buffer} =~ /\A([lr])(\d+) /) {
                 my ($chtype, $chlen) = ($1, $2);
@@ -109,12 +110,20 @@ sub request {
         require LWP::UserAgent;
         $ua = LWP::UserAgent->new;
         $ua->env_proxy;
-        $ua->set_my_handler("response_data", $callback);
+        $ua->set_my_handler(
+            "request_send", sub {
+                my ($req, $ua, $h) = @_;
+                $ua->{__buffer} = "";
+                $ua->{__body} = "";
+            });
+        $ua->set_my_handler(
+            "response_header", sub {
+                my ($resp, $ua, $h) = @_;
+                $ua->{__log_level} = 0 unless $resp->header('x-riap-logging');
+            });
+        $ua->set_my_handler(
+            "response_data", $callback);
     }
-
-    # need to set due to closure?
-    $ua->{__buffer}    = "";
-    $ua->{__body}      = "";
 
     if (defined $self->{user}) {
         require URI;
@@ -131,7 +140,7 @@ sub request {
 
     my $http_req = HTTP::Request->new(POST => $server_url);
     for (keys %$rreq) {
-        next if /\A(?:args|fmt|loglevel|marklog|_.*)\z/;
+        next if /\A(?:args|fmt|loglevel|_.*)\z/;
         my $hk = "x-riap-$_";
         my $hv = $rreq->{$_};
         if (!defined($hv) || ref($hv)) {
@@ -140,9 +149,8 @@ sub request {
         }
         $http_req->header($hk => $hv);
     }
-    $ua->{__mark_log} = $self->{log_level} ? 1:0;
-    $http_req->header('x-riap-marklog'  => $ua->{__mark_log});
-    $http_req->header('x-riap-loglevel' => $self->{log_level});
+    $ua->{__log_level} = $self->{log_level};
+    $http_req->header('x-riap-loglevel' => $ua->{__log_level});
     $http_req->header('x-riap-fmt'      => 'json');
 
     my %args;
@@ -160,7 +168,7 @@ sub request {
 
     my $attempts = 0;
     my $do_retry;
-    my $http0_res;
+    my $http_res;
     while (1) {
         $do_retry = 0;
 
@@ -174,7 +182,7 @@ sub request {
             LWP::Protocol::implementor("http", $imp);
         }
 
-        eval { $http0_res = $ua->request($http_req) };
+        eval { $http_res = $ua->request($http_req) };
         my $eval_err = $@;
 
         if ($old_imp) {
@@ -183,9 +191,9 @@ sub request {
 
         return [500, "Client died: $eval_err"] if $eval_err;
 
-        if ($http0_res->code >= 500) {
+        if ($http_res->code >= 500) {
             $log->warnf("Network failure (%d - %s), retrying ...",
-                        $http0_res->code, $http0_res->message);
+                        $http_res->code, $http_res->message);
             $do_retry++;
         }
 
@@ -196,18 +204,19 @@ sub request {
         }
     }
 
-    return [500, "Network failure: ".$http0_res->code." - ".$http0_res->message]
-        unless $http0_res->is_success;
+    return [500, "Network failure: ".$http_res->code." - ".$http_res->message]
+        unless $http_res->is_success;
 
     # empty __buffer
-    $callback->($http0_res, $ua, undef, "") if length($ua->{__buffer});
+    $callback->($http_res, $ua, undef, "") if length($ua->{__buffer});
 
     return [500, "Empty response from server (1)"]
-        if !length($http0_res->content);
+        if !length($http_res->content);
     return [500, "Empty response from server (2)"]
         unless length($ua->{__body});
 
     eval {
+        #say "D:body=$ua->{__body}";
         $log->tracef("body: %s", $ua->{__body});
         $res = $json->decode($ua->{__body});
     };
@@ -249,7 +258,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.13
+version 0.14
 
 =head1 SYNOPSIS
 

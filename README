@@ -2,7 +2,7 @@ NAME
     Perinci::Access::HTTP::Client - Riap::HTTP client
 
 VERSION
-    version 0.13
+    version 0.14
 
 SYNOPSIS
      use Perinci::Access::HTTP::Client;

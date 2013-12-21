@@ -10,7 +10,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 5.006, CPAN::Meta::Converter version 2.132830'
+generated_by: 'Dist::Zilla version 5.006, CPAN::Meta::Converter version 2.132510'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -21,7 +21,7 @@ requires:
   LWP::UserAgent: 0
   Log::Any: 0
   Perinci::Access::Base: 0.29
-  Riap: v1.1.11
+  Riap: v1.1.22
   URI: 0
   URI::Split: 0
   experimental: 0
@@ -30,10 +30,10 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Perinci-Access-HTTP-Client
   homepage: https://metacpan.org/release/Perinci-Access-HTTP-Client
   repository: git://github.com/sharyanto/perl-Perinci-Access-HTTP-Client.git
-version: 0.13
+version: 0.14
 x_Dist_Zilla:
   perl:
-    version: 5.018001
+    version: 5.010001
   plugins:
     -
       class: Dist::Zilla::Plugin::GatherDir
@@ -212,11 +212,11 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::ReadmeFromPod
       name: '@Author::SHARYANTO/ReadmeFromPod'
-      version: 0.21
+      version: 0.18
     -
       class: Dist::Zilla::Plugin::Rinci::Validate
       name: '@Author::SHARYANTO/Rinci::Validate'
-      version: 0.09
+      version: 0.11
     -
       class: Dist::Zilla::Plugin::Test::Compile
       config:
