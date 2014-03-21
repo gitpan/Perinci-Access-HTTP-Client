@@ -2,7 +2,7 @@ NAME
     Perinci::Access::HTTP::Client - Riap::HTTP client
 
 VERSION
-    version 0.14
+    version 0.15
 
 SYNOPSIS
      use Perinci::Access::HTTP::Client;
@@ -102,6 +102,10 @@ ENVIRONMENT
     "PERINCI_HTTP_PASSWORD".
 
 FAQ
+  How do I connect to an HTTPS server without a "real" SSL certificate?
+    Set environment variable "PERL_LWP_SSL_VERIFY_HOSTNAME" to 0. See LWP
+    for more details.
+
 TODO
     *   attr: hook/handler to pass to $ua
 
@@ -132,7 +136,7 @@ AUTHOR
     Steven Haryanto <stevenharyanto@gmail.com>
 
 COPYRIGHT AND LICENSE
-    This software is copyright (c) 2013 by Steven Haryanto.
+    This software is copyright (c) 2014 by Steven Haryanto.
 
     This is free software; you can redistribute it and/or modify it under
     the same terms as the Perl 5 programming language system itself.

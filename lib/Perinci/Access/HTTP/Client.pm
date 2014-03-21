@@ -10,7 +10,7 @@ use Scalar::Util qw(blessed);
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.14'; # VERSION
+our $VERSION = '0.15'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -175,10 +175,9 @@ sub request {
         my $old_imp;
         if ($self->{lwp_implementor}) {
             my $imp = $self->{lwp_implementor};
-            $imp =~ s!::!/!g; $imp .= ".pm";
+            my $imppm = $imp; $imppm =~ s!::!/!g; $imppm .= ".pm";
             $old_imp = LWP::Protocol::implementor("http");
-            eval "require $imp" or
-                return [500, "Can't load $self->{lwp_implementor}: $@"];
+            eval { require $imppm } or return [500, "Can't load $imp: $@"];
             LWP::Protocol::implementor("http", $imp);
         }
 
@@ -258,7 +257,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =head1 SYNOPSIS
 
@@ -376,6 +375,11 @@ C<PERINCI_HTTP_PASSWORD>.
 
 =head1 FAQ
 
+=head2 How do I connect to an HTTPS server without a "real" SSL certificate?
+
+Set environment variable C<PERL_LWP_SSL_VERIFY_HOSTNAME> to 0. See L<LWP> for
+more details.
+
 =head1 TODO
 
 =over
@@ -414,7 +418,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Steven Haryanto.
+This software is copyright (c) 2014 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

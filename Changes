@@ -1,5 +1,14 @@
 Revision history for Perinci-Access-HTTP-Client
 
+0.15     2014-03-21 (SHARYANTO)
+
+         - No functional changes.
+
+         [BUG FIXES]
+
+         - Setting lwp_implementor didn't work.
+
+
 0.14     2013-12-21 (SHARYANTO)
 
          - Support Riap::HTTP 1.1.22.
