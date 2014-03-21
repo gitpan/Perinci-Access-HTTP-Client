@@ -30,6 +30,7 @@
       "runtime" : {
          "requires" : {
             "JSON" : "0",
+            "LWP::Protocol::http::SocketUnixAlt" : "0",
             "LWP::UserAgent" : "0",
             "Log::Any" : "0",
             "Perinci::Access::Base" : "0.29",
@@ -61,7 +62,7 @@
          "web" : "https://github.com/sharyanto/perl-Perinci-Access-HTTP-Client"
       }
    },
-   "version" : "0.15",
+   "version" : "0.16",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018002"

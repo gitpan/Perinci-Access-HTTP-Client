@@ -1,5 +1,19 @@
 Revision history for Perinci-Access-HTTP-Client
 
+0.16     2014-03-21 (SHARYANTO)
+
+         [REMOVED FEATURES]
+
+         - Remove 'lwp_implementor' attribute. The class now hides LWP details
+           and support connecting to http-over-Unix-socket automatically by
+           detecting the URL syntax.
+
+
+         [BUG FIXES]
+
+         - Setting lwp_implementor didn't work.
+
+
 0.15     2014-03-21 (SHARYANTO)
 
          - No functional changes.

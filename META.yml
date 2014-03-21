@@ -18,6 +18,7 @@ meta-spec:
 name: Perinci-Access-HTTP-Client
 requires:
   JSON: '0'
+  LWP::Protocol::http::SocketUnixAlt: '0'
   LWP::UserAgent: '0'
   Log::Any: '0'
   Perinci::Access::Base: '0.29'
@@ -30,7 +31,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Perinci-Access-HTTP-Client
   homepage: https://metacpan.org/release/Perinci-Access-HTTP-Client
   repository: git://github.com/sharyanto/perl-Perinci-Access-HTTP-Client.git
-version: '0.15'
+version: '0.16'
 x_Dist_Zilla:
   perl:
     version: '5.018002'

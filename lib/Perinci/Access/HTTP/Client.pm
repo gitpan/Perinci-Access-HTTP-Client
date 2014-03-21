@@ -10,7 +10,7 @@ use Scalar::Util qw(blessed);
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -22,7 +22,6 @@ sub new {
     # attributes
     $self->{retries}         //= 2;
     $self->{retry_delay}     //= 3;
-    $self->{lwp_implementor} //= undef;
     unless (defined $self->{log_level}) {
         $self->{log_level} =
             $ENV{TRACE} ? 6 :
@@ -166,6 +165,12 @@ sub request {
 
     #use Data::Dump; dd $http_req;
 
+    my $custom_lwp_imp;
+    if ($server_url =~ m!\Ahttps?:/[^/]!i) { # XXX we don't support https, rite?
+        require LWP::Protocol::http::SocketUnixAlt;
+        $custom_lwp_imp = "LWP::Protocol::http::SocketUnixAlt";
+    }
+
     my $attempts = 0;
     my $do_retry;
     my $http_res;
@@ -173,12 +178,9 @@ sub request {
         $do_retry = 0;
 
         my $old_imp;
-        if ($self->{lwp_implementor}) {
-            my $imp = $self->{lwp_implementor};
-            my $imppm = $imp; $imppm =~ s!::!/!g; $imppm .= ".pm";
+        if ($custom_lwp_imp) {
             $old_imp = LWP::Protocol::implementor("http");
-            eval { require $imppm } or return [500, "Can't load $imp: $@"];
-            LWP::Protocol::implementor("http", $imp);
+            LWP::Protocol::implementor("http", $custom_lwp_imp);
         }
 
         eval { $http_res = $ua->request($http_req) };
@@ -257,7 +259,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =head1 SYNOPSIS
 
@@ -335,12 +337,6 @@ retries.
 
 Number of seconds to wait between retries.
 
-=item * lwp_implementor => STR
-
-If specified, use this class for http LWP::Protocol::implementor(). For example,
-to access Unix socket server instead of a normal TCP one, set this to
-'LWP::Protocol::http::SocketUnix'.
-
 =item * log_level => INT (default 0 or from environment)
 
 Will be fed into Riap request key 'loglevel' (if >0). Note that some servers
@@ -375,20 +371,20 @@ C<PERINCI_HTTP_PASSWORD>.
 
 =head1 FAQ
 
+=head2 How do I connect to a HTTP server that listens on a Unix socket?
+
+This class can switch to using L<LWP::Protocol::http::SocketUnixAlt> when it
+detects that the server is on a Unix socket, using this syntax (notice the
+single instead of double slash after C<http:>):
+
+ http:/path/to/unix.sock//uri
+
 =head2 How do I connect to an HTTPS server without a "real" SSL certificate?
 
-Set environment variable C<PERL_LWP_SSL_VERIFY_HOSTNAME> to 0. See L<LWP> for
-more details.
+Since this module is using L<LWP>, you can set environment variable
+C<PERL_LWP_SSL_VERIFY_HOSTNAME> to 0. See LWP for more details.
 
 =head1 TODO
-
-=over
-
-=item * attr: hook/handler to pass to $ua
-
-=item * attr: use custom $ua object
-
-=back
 
 =head1 SEE ALSO
 

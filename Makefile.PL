@@ -22,6 +22,7 @@ my %WriteMakefileArgs = (
   "NAME" => "Perinci::Access::HTTP::Client",
   "PREREQ_PM" => {
     "JSON" => 0,
+    "LWP::Protocol::http::SocketUnixAlt" => 0,
     "LWP::UserAgent" => 0,
     "Log::Any" => 0,
     "Perinci::Access::Base" => "0.29",
@@ -36,7 +37,7 @@ my %WriteMakefileArgs = (
     "IPC::Open3" => 0,
     "Test::More" => 0
   },
-  "VERSION" => "0.15",
+  "VERSION" => "0.16",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -48,6 +49,7 @@ my %FallbackPrereqs = (
   "IO::Handle" => 0,
   "IPC::Open3" => 0,
   "JSON" => 0,
+  "LWP::Protocol::http::SocketUnixAlt" => 0,
   "LWP::UserAgent" => 0,
   "Log::Any" => 0,
   "Perinci::Access::Base" => "0.29",
