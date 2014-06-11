@@ -2,7 +2,9 @@ NAME
     Perinci::Access::HTTP::Client - Riap::HTTP client
 
 VERSION
-    version 0.16
+    This document describes version 0.17 of Perinci::Access::HTTP::Client
+    (from Perl distribution Perinci-Access-HTTP-Client), released on
+    2014-06-11.
 
 SYNOPSIS
      use Perinci::Access::HTTP::Client;
@@ -54,6 +56,16 @@ ATTRIBUTES
         For HTTP basic authentication. Default will be taken from
         environment "PERINCI_HTTP_PASSWORD".
 
+    *   ssl_cert_file => STR
+
+        Path to SSL client certificate. Default will be taken from
+        environment "SSL_CERT_FILE".
+
+    *   ssl_cert_file => STR
+
+        Path to SSL CA certificate. Default will be taken from environment
+        "SSL_CA_FILE".
+
 METHODS
   PKG->new(%attrs) => OBJ
     Instantiate object. Known attributes:
@@ -94,6 +106,8 @@ ENVIRONMENT
     "PERINCI_HTTP_USER".
 
     "PERINCI_HTTP_PASSWORD".
+
+    "SSL_CERT_FILE", "SSL_CA_FILE".
 
 FAQ
   How do I connect to a HTTP server that listens on a Unix socket?

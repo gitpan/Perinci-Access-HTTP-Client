@@ -10,7 +10,7 @@ use Scalar::Util qw(blessed);
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.16'; # VERSION
+our $VERSION = '0.17'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -33,6 +33,8 @@ sub new {
     $self->{log_callback}    //= undef;
     $self->{user}            //= $ENV{PERINCI_HTTP_USER};
     $self->{password}        //= $ENV{PERINCI_HTTP_PASSWORD};
+    $self->{ssl_cert_file}   //= $ENV{SSL_CERT_FILE};
+    $self->{ssl_ca_file}     //= $ENV{SSL_CA_FILE};
 
     $self;
 }
@@ -107,7 +109,12 @@ sub request {
 
     if (!$ua) {
         require LWP::UserAgent;
-        $ua = LWP::UserAgent->new;
+        $ua = LWP::UserAgent->new(
+            ssl_opts => {
+                SSL_cert_file => $self->{ssl_cert_file},
+                SSL_ca_file   => $self->{ssl_ca_file},
+            },
+        );
         $ua->env_proxy;
         $ua->set_my_handler(
             "request_send", sub {
@@ -259,7 +266,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-version 0.16
+This document describes version 0.17 of Perinci::Access::HTTP::Client (from Perl distribution Perinci-Access-HTTP-Client), released on 2014-06-11.
 
 =head1 SYNOPSIS
 
@@ -318,6 +325,16 @@ C<PERINCI_HTTP_USER>.
 For HTTP basic authentication. Default will be taken from environment
 C<PERINCI_HTTP_PASSWORD>.
 
+=item * ssl_cert_file => STR
+
+Path to SSL client certificate. Default will be taken from environment
+C<SSL_CERT_FILE>.
+
+=item * ssl_cert_file => STR
+
+Path to SSL CA certificate. Default will be taken from environment
+C<SSL_CA_FILE>.
+
 =back
 
 =head1 METHODS
@@ -368,6 +385,8 @@ C<%extra_keys> is optional and contains additional Riap request keys (except
 C<PERINCI_HTTP_USER>.
 
 C<PERINCI_HTTP_PASSWORD>.
+
+C<SSL_CERT_FILE>, C<SSL_CA_FILE>.
 
 =head1 FAQ
 

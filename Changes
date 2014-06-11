@@ -1,5 +1,10 @@
 Revision history for Perinci-Access-HTTP-Client
 
+0.17     2014-06-11 (SHARYANTO)
+
+         - Add attributes: ssl_cert_file, ssl_ca_file.
+
+
 0.16     2014-03-21 (SHARYANTO)
 
          [REMOVED FEATURES]
@@ -7,11 +12,6 @@ Revision history for Perinci-Access-HTTP-Client
          - Remove 'lwp_implementor' attribute. The class now hides LWP details
            and support connecting to http-over-Unix-socket automatically by
            detecting the URL syntax.
-
-
-         [BUG FIXES]
-
-         - Setting lwp_implementor didn't work.
 
 
 0.15     2014-03-21 (SHARYANTO)
