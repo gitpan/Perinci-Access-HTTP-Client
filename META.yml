@@ -31,7 +31,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Perinci-Access-HTTP-Client
   homepage: https://metacpan.org/release/Perinci-Access-HTTP-Client
   repository: git://github.com/sharyanto/perl-Perinci-Access-HTTP-Client.git
-version: '0.17'
+version: '0.18'
 x_Dist_Zilla:
   perl:
     version: '5.018002'
@@ -224,7 +224,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::Rinci::Validate
       name: '@Author::SHARYANTO/Rinci::Validate'
-      version: '0.13'
+      version: '0.14'
     -
       class: Dist::Zilla::Plugin::SHARYANTO::OurPkgVersion
       name: '@Author::SHARYANTO/SHARYANTO::OurPkgVersion'

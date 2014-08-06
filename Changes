@@ -1,5 +1,12 @@
 Revision history for Perinci-Access-HTTP-Client
 
+0.18     2014-08-06 (SHARYANTO)
+
+         - Also accept HTTP auth user/pass on a per-request basis.
+
+         - Also accept HTTP auth user/pass in parse_url().
+
+
 0.17     2014-06-11 (SHARYANTO)
 
          - Add attributes: ssl_cert_file, ssl_ca_file.

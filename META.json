@@ -62,7 +62,7 @@
          "web" : "https://github.com/sharyanto/perl-Perinci-Access-HTTP-Client"
       }
    },
-   "version" : "0.17",
+   "version" : "0.18",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018002"
@@ -306,7 +306,7 @@
          {
             "class" : "Dist::Zilla::Plugin::Rinci::Validate",
             "name" : "@Author::SHARYANTO/Rinci::Validate",
-            "version" : "0.13"
+            "version" : "0.14"
          },
          {
             "class" : "Dist::Zilla::Plugin::SHARYANTO::OurPkgVersion",
