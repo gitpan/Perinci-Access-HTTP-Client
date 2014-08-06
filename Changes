@@ -1,5 +1,11 @@
 Revision history for Perinci-Access-HTTP-Client
 
+0.19     2014-08-06 (SHARYANTO)
+
+         - [Bugfix] Handle marked/prefixed chunk from the server when
+           X-Riap-Logging is set by the server.
+
+
 0.18     2014-08-06 (SHARYANTO)
 
          - Also accept HTTP auth user/pass on a per-request basis.

@@ -10,7 +10,7 @@ use Scalar::Util qw(blessed);
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -65,14 +65,14 @@ sub request {
     state $callback = sub {
         my ($resp, $ua, $h, $data) = @_;
 
-        # we collect HTTP response body into __buffer first. if __mark_log is
-        # set then we need to separate each log message and response part.
+        # we collect HTTP response body into __buffer first. if __mark is set
+        # then we need to separate each log message and response part.
         # otherwise, everything just needs to go to __body.
 
         #$log->tracef("got resp: %s (%d bytes)", $data, length($data));
         #say sprintf("D:got resp: %s (%d bytes)", $data, length($data));
 
-        if ($ua->{__log_level}) {
+        if ($ua->{__mark}) {
             $ua->{__buffer} .= $data;
             if ($ua->{__buffer} =~ /\A([lr])(\d+) /) {
                 my ($chtype, $chlen) = ($1, $2);
@@ -127,7 +127,11 @@ sub request {
         $ua->set_my_handler(
             "response_header", sub {
                 my ($resp, $ua, $h) = @_;
-                $ua->{__log_level} = 0 unless $resp->header('x-riap-logging');
+                if ($resp->header('x-riap-logging')) {
+                    $ua->{__mark} = 1;
+                } else {
+                    $ua->{__log_level} = 0;
+                }
             });
         $ua->set_my_handler(
             "response_data", $callback);
@@ -270,7 +274,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-This document describes version 0.18 of Perinci::Access::HTTP::Client (from Perl distribution Perinci-Access-HTTP-Client), released on 2014-08-06.
+This document describes version 0.19 of Perinci::Access::HTTP::Client (from Perl distribution Perinci-Access-HTTP-Client), released on 2014-08-06.
 
 =head1 SYNOPSIS
 

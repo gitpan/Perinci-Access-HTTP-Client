@@ -31,7 +31,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Perinci-Access-HTTP-Client
   homepage: https://metacpan.org/release/Perinci-Access-HTTP-Client
   repository: git://github.com/sharyanto/perl-Perinci-Access-HTTP-Client.git
-version: '0.18'
+version: '0.19'
 x_Dist_Zilla:
   perl:
     version: '5.018002'

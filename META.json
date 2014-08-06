@@ -62,7 +62,7 @@
          "web" : "https://github.com/sharyanto/perl-Perinci-Access-HTTP-Client"
       }
    },
-   "version" : "0.18",
+   "version" : "0.19",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018002"
