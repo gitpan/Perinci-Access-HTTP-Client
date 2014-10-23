@@ -6,11 +6,12 @@ use warnings;
 use experimental 'smartmatch';
 use Log::Any '$log';
 
+use Perinci::AccessUtil qw(strip_riap_stuffs_from_res);
 use Scalar::Util qw(blessed);
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.19'; # VERSION
+our $VERSION = '0.20'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -240,7 +241,7 @@ sub request {
     return [500, "Invalid JSON from server: $eval_err"] if $eval_err;
 
     #use Data::Dump; dd $res;
-    $res;
+    strip_riap_stuffs_from_res($res);
 }
 
 sub parse_url {
@@ -274,7 +275,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-This document describes version 0.19 of Perinci::Access::HTTP::Client (from Perl distribution Perinci-Access-HTTP-Client), released on 2014-08-06.
+This document describes version 0.20 of Perinci::Access::HTTP::Client (from Perl distribution Perinci-Access-HTTP-Client), released on 2014-10-23.
 
 =head1 SYNOPSIS
 
@@ -433,7 +434,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Perinci-Ac
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/sharyanto/perl-Perinci-Access-HTTP-Client>.
+Source repository is at L<https://github.com/perlancar/perl-Perinci-Access-HTTP-Client>.
 
 =head1 BUGS
 
@@ -445,11 +446,11 @@ feature.
 
 =head1 AUTHOR
 
-Steven Haryanto <stevenharyanto@gmail.com>
+perlancar <perlancar@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by Steven Haryanto.
+This software is copyright (c) 2014 by perlancar@cpan.org.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
