@@ -2,9 +2,9 @@ NAME
     Perinci::Access::HTTP::Client - Riap::HTTP client
 
 VERSION
-    This document describes version 0.20 of Perinci::Access::HTTP::Client
+    This document describes version 0.21 of Perinci::Access::HTTP::Client
     (from Perl distribution Perinci-Access-HTTP-Client), released on
-    2014-10-23.
+    2014-10-24.
 
 SYNOPSIS
      use Perinci::Access::HTTP::Client;

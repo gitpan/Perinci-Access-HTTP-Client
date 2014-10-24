@@ -11,7 +11,7 @@ use Scalar::Util qw(blessed);
 
 use parent qw(Perinci::Access::Base);
 
-our $VERSION = '0.20'; # VERSION
+our $VERSION = '0.21'; # VERSION
 
 my @logging_methods = Log::Any->logging_methods();
 
@@ -51,7 +51,8 @@ sub request {
         "=> %s\::request(action=%s, server_url=%s, extra=%s)",
         __PACKAGE__, $action, $server_url, $extra);
     return [400, "Please specify server_url"] unless $server_url;
-    my $rreq = { action=>$action,
+    my $rreq = { v=>$self->{riap_version},
+                 action=>$action,
                  ua=>"Perinci/".($Perinci::Access::HTTP::Client::VERSION//"?"),
                  %$extra };
     my $res = $self->check_request($rreq);
@@ -275,7 +276,7 @@ Perinci::Access::HTTP::Client - Riap::HTTP client
 
 =head1 VERSION
 
-This document describes version 0.20 of Perinci::Access::HTTP::Client (from Perl distribution Perinci-Access-HTTP-Client), released on 2014-10-23.
+This document describes version 0.21 of Perinci::Access::HTTP::Client (from Perl distribution Perinci-Access-HTTP-Client), released on 2014-10-24.
 
 =head1 SYNOPSIS
 

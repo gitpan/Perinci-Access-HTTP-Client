@@ -21,7 +21,7 @@ requires:
   LWP::Protocol::http::SocketUnixAlt: '0'
   LWP::UserAgent: '0'
   Log::Any: '0'
-  Perinci::Access::Base: '0.31'
+  Perinci::Access::Base: '0.32'
   Perinci::AccessUtil: '0.04'
   Riap: v1.2.0
   URI: '0'
@@ -32,7 +32,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Perinci-Access-HTTP-Client
   homepage: https://metacpan.org/release/Perinci-Access-HTTP-Client
   repository: git://github.com/perlancar/perl-Perinci-Access-HTTP-Client.git
-version: '0.20'
+version: '0.21'
 x_Dist_Zilla:
   perl:
     version: '5.018002'

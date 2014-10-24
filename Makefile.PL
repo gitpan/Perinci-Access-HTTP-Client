@@ -24,7 +24,7 @@ my %WriteMakefileArgs = (
     "LWP::Protocol::http::SocketUnixAlt" => 0,
     "LWP::UserAgent" => 0,
     "Log::Any" => 0,
-    "Perinci::Access::Base" => "0.31",
+    "Perinci::Access::Base" => "0.32",
     "Perinci::AccessUtil" => "0.04",
     "Riap" => "v1.2.0",
     "URI" => 0,
@@ -37,7 +37,7 @@ my %WriteMakefileArgs = (
     "IPC::Open3" => 0,
     "Test::More" => 0
   },
-  "VERSION" => "0.20",
+  "VERSION" => "0.21",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -52,7 +52,7 @@ my %FallbackPrereqs = (
   "LWP::Protocol::http::SocketUnixAlt" => 0,
   "LWP::UserAgent" => 0,
   "Log::Any" => 0,
-  "Perinci::Access::Base" => "0.31",
+  "Perinci::Access::Base" => "0.32",
   "Perinci::AccessUtil" => "0.04",
   "Riap" => "v1.2.0",
   "Test::More" => 0,
